@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import YearSelection from "./screens/YearSelection.js";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StudentsLogin from "./screens/StudentsLogin.js";
+import DashBoard from "./screens/Dashboard/DashBoard.js";
+import ProfileView from "./screens/ProfileView.js";
+import ManagePassword from "./screens/ManagePassword.js";
+import EditProfile from "./screens/EditProfile.js";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/yearSelection" element={<YearSelection />} />
+          <Route path="/login" element={<StudentsLogin />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/profileView" element={<ProfileView />} />
+          <Route path="/ManagePassword" element={<ManagePassword />} />
+          <Route path="/editProfile" element={<EditProfile />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
