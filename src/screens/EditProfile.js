@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Menu, MenuItem, IconButton,TextField, FormControl } from "@mui/material";
+import { Box, Typography, Menu, MenuItem, IconButton, TextField, FormControl } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logo from "../assets/logo.png";
@@ -133,14 +133,13 @@ function EditProfile() {
       >
         <Box
           sx={{
-            width: 420,
-            height: 600,
+            width: 800,
+            height: 650,
             backgroundColor: "#D9D9D91A",
             marginTop: 6,
             display: "flex",
             alignItems: "flex-start",
-						justifyContent:"flex-start",
-						
+            justifyContent: "center",
             flexDirection: "column",
             padding: 6,
           }}
@@ -157,10 +156,10 @@ function EditProfile() {
               gap: 3,
             }}
           >
-            <Typography sx={{ fontSize: 20, color: "white" }}>
+            <Typography sx={{ fontSize: 20, color: "white", width: 200 }}>
               Email Address:
             </Typography>
-            <Box sx={{ width: 250 }}>
+            <Box sx={{ width: 500 }}>
               <FormControl fullWidth>
                 <TextField
                   sx={{
@@ -181,10 +180,10 @@ function EditProfile() {
               gap: 3,
             }}
           >
-            <Typography sx={{ fontSize: 20, color: "white" }}>
+            <Typography sx={{ fontSize: 20, color: "white", width: 200 }}>
               Address:
             </Typography>
-            <Box sx={{ width: 250 }}>
+            <Box sx={{ width: 500 }}>
               <FormControl fullWidth>
                 <TextField
                   sx={{
@@ -205,10 +204,10 @@ function EditProfile() {
               gap: 3,
             }}
           >
-            <Typography sx={{ fontSize: 20, color: "white" }}>
+            <Typography sx={{ fontSize: 20, color: "white", width: 200 }}>
               Area Pincode:
             </Typography>
-            <Box sx={{ width: 250 }}>
+            <Box sx={{ width: 500 }}>
               <FormControl fullWidth>
                 <TextField
                   sx={{
@@ -229,10 +228,10 @@ function EditProfile() {
               gap: 3,
             }}
           >
-            <Typography sx={{ fontSize: 20, color: "white" }}>
+            <Typography sx={{ fontSize: 20, color: "white", width: 200 }}>
               Hobbies & interests:
             </Typography>
-            <Box sx={{ width: 250 }}>
+            <Box sx={{ width: 500 }}>
               <FormControl fullWidth>
                 <TextField
                   sx={{
@@ -246,15 +245,15 @@ function EditProfile() {
           </Box>
           <Box
             sx={{
-              width: 250,
+              width: 280,
               marginTop: 5,
+              height: 70,
               backgroundColor: "#D9D9D9",
-              height: 60,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 10,
-							marginLeft:10
+              marginLeft: 35
             }}
           >
             <Typography
