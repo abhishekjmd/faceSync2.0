@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Menu, MenuItem, IconButton, TextField, FormControl } from "@mui/material";
+import { Box, Typography, Menu, MenuItem, IconButton, TextField, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,Button } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logo from "../assets/logo.png";
@@ -7,6 +7,12 @@ import logo from "../assets/logo.png";
 function EditProfile() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [hobbies, setHobbies] = useState('');
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -14,6 +20,20 @@ function EditProfile() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleUpdateClick = () => {
+    if (!email.trim() || !address.trim() || !pincode.trim() || !hobbies.trim()) {
+      setAlertMessage('Please fill in all fields.');
+      setAlertOpen(true);
+    } else {
+      // Proceed with the update logic here
+      setAlertMessage('Profile updated successfully.');
+      setAlertOpen(true);
+    }
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
   };
 
   return (
@@ -167,6 +187,8 @@ function EditProfile() {
                   }}
                   label="Enter Your Email Address"
                   name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormControl>
             </Box>
@@ -191,6 +213,8 @@ function EditProfile() {
                   }}
                   label="E	nter Your Address"
                   name="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
               </FormControl>
             </Box>
@@ -215,6 +239,8 @@ function EditProfile() {
                   }}
                   label="Enter Your Area Pincode"
                   name="pincode"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
                 />
               </FormControl>
             </Box>
@@ -239,11 +265,14 @@ function EditProfile() {
                   }}
                   label="Enter Your hobbies"
                   name="hobbies"
+                  value={hobbies}
+                  onChange={(e) => setHobbies(e.target.value)}
                 />
               </FormControl>
             </Box>
           </Box>
           <Box
+            onClick={handleUpdateClick}
             sx={{
               width: 280,
               marginTop: 5,
@@ -266,6 +295,22 @@ function EditProfile() {
               Update
             </Typography>
           </Box>
+          <Dialog
+            open={alertOpen}
+            onClose={handleAlertClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Update Status"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {alertMessage}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleAlertClose}>OK</Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       </Box>
     </Box>

@@ -8,6 +8,12 @@ import {
   FormControl,
   TextField,
   Link,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -16,6 +22,8 @@ import logo from "../assets/logo.png";
 function ManagePassword() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,6 +31,22 @@ function ManagePassword() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleUpdatePassword = () => {
+    // Validate and process the password update here
+    setAlertMessage("Password update successful.");
+    setAlertOpen(true);
+  };
+
+  const handleUpdateUsername = () => {
+    // Validate and process the username update here
+    setAlertMessage("Username update successful.");
+    setAlertOpen(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
   };
   return (
     <Box
@@ -133,28 +157,23 @@ function ManagePassword() {
               />
             </FormControl>
           </Box>
-          <Box
-            sx={{
-              width: 350,
-              marginTop: 5,
-              backgroundColor: "#D9D9D9",
-              height: 60,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 10,
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: 30,
-                textTransform: "uppercase",
-                fontWeight: "700",
-              }}
-            >
-              Update
-            </Typography>
-          </Box>
+          <Button variant="contained" onClick={handleUpdatePassword} sx={{
+            mt: 2, width: 350,
+            marginTop: 5,
+            backgroundColor: "#D9D9D9",
+            height: 60,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+            fontSize: 30,
+            textTransform: "uppercase",
+            fontWeight: "700",
+            color:'black',
+            ':hover': { bgcolor: '#cccccc' }
+          }}>
+            Update
+          </Button>
           <Box sx={{ marginTop: 5 }}>
             <Typography
               sx={{
@@ -233,30 +252,40 @@ function ManagePassword() {
               />
             </FormControl>
           </Box>
-          <Box
-            sx={{
-              width: 350,
-              marginTop: 5,
-              backgroundColor: "#D9D9D9",
-              height: 60,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 10,
-              marginBottom: 15,
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: 30,
-                textTransform: "uppercase",
-                fontWeight: "700",
-              }}
-            >
-              Update
-            </Typography>
-          </Box>
+          <Button variant="contained" onClick={handleUpdateUsername} sx={{
+            mt: 2, width: 350,
+            marginTop: 5,
+            backgroundColor: "#D9D9D9",
+            height: 60,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+            fontSize: 30,
+            textTransform: "uppercase",
+            fontWeight: "700",
+            color: 'black',
+            ':hover': { bgcolor: '#cccccc' }
+          }}>
+            Update
+          </Button>
         </Box>
+        <Dialog
+          open={alertOpen}
+          onClose={handleCloseAlert}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Update Notification"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {alertMessage}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseAlert}>OK</Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );

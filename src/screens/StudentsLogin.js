@@ -1,7 +1,28 @@
-import { Box, FormControl, Link, TextField, Typography } from "@mui/material";
+import { Box, FormControl, Link, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, } from "@mui/material";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
+import { useState } from 'react';
 
 const StudentsLogin = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const handleLogin = () => {
+    if (!username.trim() || !password.trim()) {
+      setAlertMessage('Username and password are required.');
+      setAlertOpen(true);
+    } else {
+      // Here, you would typically handle actual login logic, such as sending a request to your backend
+      setAlertMessage('Login successful!');
+      setAlertOpen(true);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
+
   return (
     <Box
       sx={{
@@ -46,6 +67,8 @@ const StudentsLogin = () => {
           <FormControl fullWidth>
             <TextField
               label="Enter username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               InputLabelProps={{
                 style: { color: "white" }, // Directly style the label
               }}
@@ -76,9 +99,12 @@ const StudentsLogin = () => {
         >
           <FormControl fullWidth>
             <TextField
-              InputLabelProps={{
-                style: { color: "white" }, // Directly style the label
-              }}
+              label="Enter Password"
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              InputLabelProps={{ style: { color: 'white' } }}
               sx={{
                 backgroundColor: "#D9D9D91A",
                 color: "white",
@@ -93,8 +119,6 @@ const StudentsLogin = () => {
                   color: "white", // Ensure label remains white when focused
                 },
               }}
-              label="Enter Password"
-              name="password"
             />
           </FormControl>
         </Box>
@@ -119,30 +143,38 @@ const StudentsLogin = () => {
             </Link>
           </Typography>
         </Box>
-        <Box
+        <Button
+          variant="contained"
           sx={{
-            width: 350,
-            height: 70,
-            backgroundColor: "#FFFFFFCC",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 10,
-            borderRadius: 20,
+            mt: 5, bgcolor: 'white', color: 'black', ':hover': { bgcolor: '#cccccc' }, width: 350,
+            height: 70, fontWeight: 700,
+            fontSize: 36,
+            textTransform: "uppercase",
+            color: "black",
           }}
+          onClick={handleLogin}
         >
-          <Typography
-            sx={{
-              fontWeight: 700,
-              fontSize: 36,
-              textTransform: "uppercase",
-              color: "black",
-            }}
-          >
-            Login
-          </Typography>
+          Login
+        </Button>
+        <Dialog
+          open={alertOpen}
+          onClose={handleCloseAlert}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Login Alert"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {alertMessage}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseAlert} color="primary" autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
         </Box>
-      </Box>
     </Box>
   );
 };
