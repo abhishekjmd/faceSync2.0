@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Box, Typography, Menu, MenuItem, IconButton, TextField, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,Button } from "@mui/material";
+import { Box, Typography, Menu, MenuItem, IconButton, TextField, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 function EditProfile() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -13,6 +16,7 @@ function EditProfile() {
   const [hobbies, setHobbies] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -21,15 +25,45 @@ function EditProfile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleUpdateClick = () => {
+
+  const handleUpdateClick = async () => {
+    // Retrieve the userId from localStorage
+    const userId = localStorage.getItem('userId');
+
+    // Ensure userId is not null
+    if (!userId) {
+      setAlertMessage('User ID not found. Please log in again.');
+      setAlertOpen(true);
+      return;
+    }
     if (!email.trim() || !address.trim() || !pincode.trim() || !hobbies.trim()) {
       setAlertMessage('Please fill in all fields.');
       setAlertOpen(true);
     } else {
-      // Proceed with the update logic here
-      setAlertMessage('Profile updated successfully.');
-      setAlertOpen(true);
+      try {
+        const response = await axios.patch(`http://192.168.155.237:3000/api/profile/${userId}`, {
+          email, address, pincode, hobbies
+        });
+        if (response.status === 200) {
+          setAlertMessage('Profile updated successfully.');
+          setAlertOpen(true);
+          navigate('/profileView')
+          // Optionally, clear the form fields or perform additional actions
+        } else {
+          // Handle any other responses
+          setAlertMessage('Failed to update profile. Please try again.');
+          setAlertOpen(true);
+        }
+      } catch (error) {
+        setAlertMessage('Failed to update profile. Please try again.');
+        setAlertOpen(true);
+        console.error('Error updating profile:', error);
+      }
     }
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
   };
 
   const handleAlertClose = () => {
@@ -57,18 +91,10 @@ function EditProfile() {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
           <img src={logo} style={{ height: 60, width: 40 }} />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Home
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            DashBoard
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Profile
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Class Schedule
-          </Typography>
+          <Button onClick={() => handleNavigate('/')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Home</Button>
+          <Button onClick={() => handleNavigate('/dashboard')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Dashboard</Button>
+          <Button onClick={() => handleNavigate('/profileView')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Profile</Button>
+          <Button onClick={() => handleNavigate('/classSchedules')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Class Schedule</Button>
         </Box>
         <Box sx={{ display: "flex" }}>
           <Box
@@ -117,9 +143,6 @@ function EditProfile() {
                 backgroundColor: "#D9D9D9",
               }}
             />
-            <Typography sx={{ color: "white", marginTop: 1 }}>
-              Edit image
-            </Typography>
           </Box>
           <Box
             sx={{

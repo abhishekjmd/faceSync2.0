@@ -16,12 +16,17 @@ import ManageStudentsProfile from './screens/ManageStudentsProfile.js';
 import AddStudents from './screens/AddStudents.js';
 import ViewDeleteStudents from './screens/ViewDeleteStudents.js';
 import ManageAttendence from './screens/ManageAttendence.js';
+import ForgetPassword from './screens/ForgetPassword.js';
+import NewPassword from './screens/NewPassword.js';
+import WelcomePage from './screens/WelcomePage.js';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/" element={<WelcomePage />} />
+          <Route path="/welcomePage" element={<WelcomePage />} />
           <Route path="/yearSelection" element={<YearSelection />} />
           <Route path="/login" element={<StudentsLogin />} />
           <Route path="/dashboard" element={<DashBoard />} />
@@ -38,6 +43,9 @@ function App() {
           <Route path="/addStudents" element={<AddStudents />} />
           <Route path="/viewDeleteStudents" element={<ViewDeleteStudents />} />
           <Route path="/manageAttendence" element={<ManageAttendence />} />
+          <Route path="/forgetPassword" element={<ForgetPassword />} />
+          <Route path="/newPassword" element={<NewPassword />} />
+
         </Routes>
       </div>
     </Router>

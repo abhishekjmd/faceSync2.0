@@ -1,24 +1,38 @@
 import { Box, FormControl, Link, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, } from "@mui/material";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
 import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const StudentsLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+ 
+  const navigate = useNavigate()
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
       setAlertMessage('Username and password are required.');
       setAlertOpen(true);
-    } else {
-      // Here, you would typically handle actual login logic, such as sending a request to your backend
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.155.237:3000/api/login', { username, password });
       setAlertMessage('Login successful!');
+      const userId = response.data.userId
+      localStorage.setItem('userId', userId);
       setAlertOpen(true);
+      navigate('/profileView', { state: { studentId: userId } });
+      } catch (error) {
+      setAlertMessage('Login failed. Please check your credentials.');
+      setAlertOpen(true);
+      console.error('Login error:', error);
     }
   };
-
   const handleCloseAlert = () => {
     setAlertOpen(false);
   };

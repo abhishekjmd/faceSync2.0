@@ -1,9 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const studentRoutes = require('./routes/studentsRoutes.js');
-const authRoutes = require('./routes/auth.js');
+const courseRoutes = require('./routes/courseRoutes.js');
+const eventAnnouncementsRoutes = require('./routes/eventsAndAnnouncementsRoute.js');
+const classScheduleRoutes = require('./routes/classScheduleRoutes.js')
+const attendenceRoutes = require('./routes/attendenceRoutes.js')
+require('dotenv').config();
 const cors = require('cors');
 const app = express();
+
+// const crypto = require('crypto');
+// const secret = crypto.randomBytes(64).toString('hex');
+// console.log(secret);
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +25,10 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to database'));
 
 app.use('/api', studentRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api',courseRoutes);
+app.use('/api',eventAnnouncementsRoutes);
+app.use('/api/class-schedules', classScheduleRoutes);
+app.use('/api/attendance', attendenceRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

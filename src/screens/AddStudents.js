@@ -72,7 +72,7 @@ function AddStudent() {
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5, flexDirection: 'column' }}>
         <Box sx={{ width: 1000, height: 1200, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'column' }}>
           <Box sx={{ width: 400, height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid white', marginTop: 5, borderRadius: 2, backgroundColor: '#D9D9D933' }}>
-            <Typography sx={{ fontSize: 24, color: '#FFFFFF', }}>Add Session</Typography>
+            <Typography sx={{ fontSize: 24, color: '#FFFFFF', }}>Add Student</Typography>
           </Box>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
             <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

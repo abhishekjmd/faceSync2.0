@@ -57,7 +57,25 @@ const studentSchema = new mongoose.Schema({
   password: { // Assuming you intend to store a hashed password
     type: String,
     required: true
-  }
+  },
+  gender: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  area: {
+    type: String,
+    required: true
+  },
+  pincode: {
+    type: String,
+    required: true
+  },
+  hobbies: [String], // Array of strings to allow multiple hobbies
+  interests: [String]
 });
 
 // Example of pre-save hook for hashing passwords

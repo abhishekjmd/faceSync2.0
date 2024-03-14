@@ -1,15 +1,53 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import { Box, Typography, TextField, InputAdornment } from "@mui/material";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../utils/Theme";
 import logo from "../../assets/logo.png";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from 'axios';
+
 
 function DashBoard() {
+  // State to handle search input
+  const [searchInput, setSearchInput] = useState('');
+  const [events, setEvents] = useState([]);
+  const [sorted, setSorted] = useState(false);
+  
+  useEffect(() => {
+    const fetchEventsAndAnnouncements = async () => {
+      try {
+        const response = await axios.get('http://192.168.155.237:3000/api/events-announcements');
+        setEvents(response.data);
+      } catch (error) {
+        console.error("Error fetching events and announcements:", error);
+      }
+    };
+    fetchEventsAndAnnouncements();
+  }, []);
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleSortByDate = () => {
+    const sortedEvents = [...events].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sorted ? dateB - dateA : dateA - dateB; // Toggle sorting direction
+    });
+    setEvents(sortedEvents);
+    setSorted(!sorted); // Toggle sorted state
+  };
+
+  const filteredEvents = events.filter(event =>
+    event.title.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+    
   return (
     <Box
       sx={{
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        // height: SCREEN_HEIGHT,
         backgroundColor: "black",
       }}
     >
@@ -53,7 +91,7 @@ function DashBoard() {
       <Box
         sx={{
           width: SCREEN_WIDTH,
-          height: 500,
+          // height: 500,
         }}
       >
         <Box
@@ -95,7 +133,8 @@ function DashBoard() {
               alignItems: "center",
               borderRadius: 4,
             }}
-          >
+            onClick={handleSortByDate}
+            >
             <Typography
               sx={{ fontSize: 24, color: "white", textTransform: "uppercase" }}
             >
@@ -132,6 +171,8 @@ function DashBoard() {
               fullWidth
               variant="outlined"
               placeholder="Search by activity type or name"
+              value={searchInput}
+              onChange={handleSearchChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -172,50 +213,34 @@ function DashBoard() {
               Sort by dates
             </Typography>
           </Box>
-        </Box>
-        <Box
-          sx={{
-            width: SCREEN_WIDTH,
-            height: 90,
-            display: "flex",
-            backgroundColor: "#D9D9D94D",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            paddingLeft: 13,
-            marginTop: 5,
-            marginBottom: 1,
-          }}
-        >
-          <Typography sx={{ fontSize: 24, fontWeight: "700", color: "white" }}>
-            Saturday, 17 February 2024
-          </Typography>
-          <Typography sx={{ fontSize: 24, color: "white" }}>
-            BCA Sem VI Timetable effective from 30-3-2024{" "}
-          </Typography>
-        </Box>
 
-        <Box
-          sx={{
-            width: SCREEN_WIDTH,
-            height: 90,
-            display: "flex",
-            backgroundColor: "#D9D9D94D",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            paddingLeft: 13,
-            // marginTop: 5,
-            marginBottom: 1,
-          }}
-        >
-          <Typography sx={{ fontSize: 24, fontWeight: "700", color: "white" }}>
-            Saturday, 17 February 2024
-          </Typography>
-          <Typography sx={{ fontSize: 24, color: "white" }}>
-            BCA Sem VI Timetable effective from 30-3-2024{" "}
-          </Typography>
         </Box>
+        {filteredEvents.map((item, index) => (
+          <Box
+            sx={{
+              width: SCREEN_WIDTH,
+              // height: 90,
+              display: "flex",
+              backgroundColor: "#D9D9D94D",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              paddingLeft: 13,
+              marginTop: 5,
+              marginBottom: 1,
+            }}
+          >
+            <Typography sx={{ fontSize: 24, fontWeight: "700", color: "white" }}>
+              {new Date(item.date).toLocaleDateString()}
+            </Typography>
+            <Typography sx={{ fontSize: 24, color: "white" }}>
+              {item.title}
+            </Typography>
+            <Typography sx={{ fontSize: 24, color: "white" }}>
+              {item.details}
+            </Typography>
+          </Box>
+        ))}
       </Box>
     </Box>
   );

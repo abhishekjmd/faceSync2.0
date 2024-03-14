@@ -1,75 +1,192 @@
 const express = require('express');
-const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Student = require('../models/studentModels');
+const auth = require('../middleware/auth');
 
-// Get all students
-router.get('/students', async (req, res) => {
+const router = express.Router();
+
+// Registration endpoint
+router.post('/register', async (req, res) => {
   try {
-    const students = await Student.find();
-    res.json(students);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    let student = new Student(req.body);
+    await student.save();
+    res.status(201).send({ message: 'Student registered successfully' });
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
-// Get student by enrollment number
-router.get('/students/:enrollmentNumber', getStudent, (req, res) => {
-  res.json(res.student);
-});
 
-// Create a student
-router.post('/students', async (req, res) => {
-  const student = new Student(req.body); // Use entire req.body object
-
+// Get student details by ID
+router.get('/students/:id', async (req, res) => {
   try {
-    const newStudent = await student.save();
-    res.status(201).json(newStudent);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Update student by enrollment number
-router.patch('/students/:enrollmentNumber', getStudent, async (req, res) => {
-  // Updated fields based on the student model
-  ['username', 'name', 'department', 'course', 'rollNumber', 'division', 'email', 'phoneNumber', 'semester', 'year'].forEach(field => {
-    if (req.body[field] != null) {
-      res.student[field] = req.body[field];
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).send({ message: 'Student not found' });
     }
-  });
-
-  try {
-    const updatedStudent = await res.student.save();
-    res.json(updatedStudent);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.send(student);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'An error occurred while fetching the student details' });
   }
 });
 
-// Delete student by enrollment number
-router.delete('/students/:enrollmentNumber', getStudent, async (req, res) => {
+
+// Login endpoint
+// router.post('/login', async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     const student = await Student.findOne({ username });
+//     if (!student) {
+//       return res.status(400).send('User not found');
+//     }
+
+//     const isMatch = await bcrypt.compare(password, student.password);
+//     if (!isMatch) {
+//       return res.status(400).send('Invalid credentials');
+//     }
+
+//     const token = jwt.sign({ id: student._id, role: student.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//     res.send({ token });
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// });
+
+router.post('/login', async (req, res) => {
   try {
-    await res.student.remove();
-    res.json({ message: 'Student deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const { username, password } = req.body;
+    const student = await Student.findOne({ username });
+    if (!student) {
+      return res.status(400).send('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(password, student.password);
+    if (!isMatch) {
+      return res.status(400).send('Invalid credentials');
+    }
+
+    // const token = jwt.sign({ id: student._id, role: student.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.send({ userId: student._id });
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).send('An error occurred during the login process');
   }
 });
 
-// Middleware function to get student by enrollment number
+
+// Middleware to retrieve student from DB
 async function getStudent(req, res, next) {
   let student;
   try {
-    student = await Student.findOne({ enrollmentNumber: req.params.enrollmentNumber });
-    if (student == null) {
-      return res.status(404).json({ message: 'Cannot find student' });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+    student = await Student.findById(req.user.id);
+    if (!student) res.status(404).send({ message: 'Student not found' });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
   }
-
-  res.student = student;
+  req.student = student;
   next();
 }
+
+
+// Simplified Change Password
+router.post('/change-password', async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  try {
+    const student = await Student.findOne({ username });
+    if (!student) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, student.password);
+    if (!isMatch) {
+      return res.status(400).send({ message: 'Invalid current password' });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    student.password = hashedPassword;
+    await student.save();
+    res.send({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).send({ message: 'An error occurred', error });
+  }
+});
+
+
+// Simplified Change Username
+router.post('/change-username', async (req, res) => {
+  const { currentUsername, newUsername } = req.body;
+
+  try {
+    const user = await Student.findOne({ username: currentUsername });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+
+    // Check if the new username is already taken
+    const usernameExists = await Student.findOne({ username: newUsername });
+    if (usernameExists) {
+      return res.status(400).send({ message: 'Username is already taken.' });
+    }
+
+    user.username = newUsername;
+    await user.save();
+
+    res.send({ message: 'Username updated successfully.' });
+  } catch (error) {
+    res.status(500).send({ message: 'Server error.', error });
+  }
+});
+
+
+// Update student profile
+router.patch('/profile/:id', async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['email', 'phoneNumber', 'address', 'pincode', 'hobbies'];
+  const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' });
+  }
+
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return res.status(404).send({ message: 'Student not found' });
+    }
+
+    updates.forEach(update => student[update] = req.body[update]);
+    await student.save();
+    res.send(student);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// router.patch('/profile', [auth, getStudent], async (req, res) => {
+//   const updates = Object.keys(req.body);
+//   const allowedUpdates = ['email', 'phoneNumber', 'address', 'pincode','hobbies']; // Specify allowed fields
+//   const isValidOperation = updates.every(update => allowedUpdates.includes(update));
+
+//   if (!isValidOperation) return res.status(400).send({ error: 'Invalid updates!' });
+
+//   try {
+//     updates.forEach(update => (req.student[update] = req.body[update]));
+//     await req.student.save();
+//     res.send(req.student);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
+
+// Delete student profile
+router.delete('/profile', [auth, getStudent], async (req, res) => {
+  try {
+    await req.student.remove();
+    res.send({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 module.exports = router;

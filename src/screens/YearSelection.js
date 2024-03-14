@@ -1,112 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   List,
   ListItem,
   ListItemText,
+  AppBar,
+  Toolbar,
+  Button,
+  Paper,
+  Container,
+  Collapse,
 } from "@mui/material";
-import logo from "../assets/logo.png";
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+
 
 function YearSelection() {
+  const location = useLocation();
+  const course = location.state?.course; // Safely access the course object
+  const [openYear, setOpenYear] = useState('');
+  const navigate = useNavigate();
+
+  const handleClick = (year) => {
+    setOpenYear(openYear === year ? '' : year); // Toggle the open state
+  };
+
+  const handleLogin = () => {
+    navigate(`/login`);
+  };
+
+
+  if (!course) {
+    return (
+      <Box sx={{ p: 3, color: "white", backgroundColor: "black" }}>
+        <Typography variant="h6">Course not found.</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        minHeight: '100vh',
         backgroundColor: "black",
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <Box
-        sx={{
-          width: "100%",
-          height: 80,
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-          borderBottom: "1px solid #FFFFFF21",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <img src={logo} style={{ height: 60, width: 40 }} />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Home
+      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <Toolbar>
+          <Button color="inherit">Home</Button>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
+            Course Details
           </Typography>
-        </Box>
-        <Box sx={{ marginLeft: 90 }}>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Login
+          <Button color="inherit" onClick={() => handleLogin()}>Login</Button>
+        </Toolbar>
+      </AppBar>
+      <Container sx={{ py: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'white' }}>
+        <Typography variant="h4" gutterBottom sx={{ textTransform: "uppercase", textAlign: 'center' }}>
+          {course.name}
+        </Typography>
+        <Paper elevation={3} sx={{ width: '100%', p: 2, backgroundColor: "white", marginTop: 10 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Available Years
           </Typography>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          width: "100%",
-          height: 500,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box>
-          <Typography
-            sx={{ fontSize: 25, color: "white", textTransform: "uppercase" }}
-          >
-            Courses/bca
-          </Typography>
-        </Box>
-        <Box>
-          <Typography
-            sx={{ fontSize: 40, color: "white", textTransform: "uppercase" }}
-          >
-            bca
-          </Typography>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          width: SCREEN_WIDTH,
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <List style={{ color: "white" }}>
-          <ListItem
-            sx={{
-              color: "white",
-              textDecorationStyle: "dashed",
-              textTransform: "uppercase",
-            }}
-          >
-            <ListItemText primary="• fybca" />
-          </ListItem>
-          <ListItem
-            sx={{
-              color: "white",
-              textDecorationStyle: "dashed",
-              textTransform: "uppercase",
-            }}
-          >
-            <ListItemText primary=" • sybca" />
-          </ListItem>
-          <ListItem
-            sx={{
-              color: "white",
-              textDecorationStyle: "dashed",
-              textTransform: "uppercase",
-            }}
-          >
-            <ListItemText primary="• tybca" />
-          </ListItem>
-          {/* Add more items as needed */}
-        </List>
-      </Box>
+          <List>
+            {course.years.map((year) => (
+              <React.Fragment key={year}>
+                <ListItem button onClick={() => handleClick(year)} sx={{ pl: 0 }}>
+                  <ListItemText primary={year} />
+                  {openYear === year ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={openYear === year} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {course.subjects.find(s => s.year === year)?.subjects.map((subject, index) => (
+                      <ListItem key={index} sx={{ pl: 4 }}>
+                        <ListItemText primary={subject} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Collapse>
+              </React.Fragment>
+            ))}
+          </List>
+        </Paper>
+      </Container>
     </Box>
   );
 }
