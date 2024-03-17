@@ -11,7 +11,6 @@ import MarkedAttendence from './screens/MarkedAttendence.js';
 import AdminLogin from './screens/AdminLogin.js';
 import ManageSchedule from './screens/ManageSchedule.js';
 import AddSession from './screens/AddSession.js';
-import SubmitSession from './screens/SubmitSession.js';
 import ManageStudentsProfile from './screens/ManageStudentsProfile.js';
 import AddStudents from './screens/AddStudents.js';
 import ViewDeleteStudents from './screens/ViewDeleteStudents.js';
@@ -19,6 +18,8 @@ import ManageAttendence from './screens/ManageAttendence.js';
 import ForgetPassword from './screens/ForgetPassword.js';
 import NewPassword from './screens/NewPassword.js';
 import WelcomePage from './screens/WelcomePage.js';
+import EventDetails from './screens/Dashboard/EventDetails.js';
+import AddEventsAndAnnouncements from './screens/AddEventsAndAnnouncements.js';
 
 function App() {
   return (
@@ -38,13 +39,14 @@ function App() {
           <Route path="/adminLogin" element={<AdminLogin />} />
           <Route path="/manageSchedule" element={<ManageSchedule />} />
           <Route path="/addSession" element={<AddSession />} />
-          <Route path="/submitSession" element={<SubmitSession />} />
+          <Route path="/addEventsAndAnnouncements" element={<AddEventsAndAnnouncements />} />
           <Route path="/manageStudentsProfile" element={<ManageStudentsProfile />} />
           <Route path="/addStudents" element={<AddStudents />} />
           <Route path="/viewDeleteStudents" element={<ViewDeleteStudents />} />
           <Route path="/manageAttendence" element={<ManageAttendence />} />
           <Route path="/forgetPassword" element={<ForgetPassword />} />
           <Route path="/newPassword" element={<NewPassword />} />
+          <Route path="/eventDetails" element={<EventDetails />} />
 
         </Routes>
       </div>

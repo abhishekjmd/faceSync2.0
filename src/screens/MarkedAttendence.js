@@ -15,7 +15,6 @@ function MarkedAttendence() {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const fetchAttendanceRecords = async () => {
       try {
@@ -30,6 +29,11 @@ function MarkedAttendence() {
 
   const handleNavigate = (path) => {
     navigate(path);
+  };
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+    handleClose(); // Close the menu after navigation
   };
 
   const handleClick = (event) => {
@@ -58,7 +62,6 @@ function MarkedAttendence() {
         padding: { xs: 2, sm: 4 },
       }}
     >
-
       <Box
         sx={{
           display: "flex",
@@ -91,10 +94,10 @@ function MarkedAttendence() {
             <ArrowDropDownIcon sx={{ color: "white", fontSize: 30 }} />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            <MenuItem onClick={handleClose}>Edit Profile</MenuItem>
-            <MenuItem onClick={handleClose}>Manage Password</MenuItem>
-            <MenuItem onClick={handleClose}>View Marked Attendance</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/editProfile')}>Edit Profile</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/ManagePassword')}>Manage Password</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/markedAttendence')}>View Marked Attendance</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/welcomePage')}>Logout</MenuItem>
           </Menu>
         </Box>
       </Box>

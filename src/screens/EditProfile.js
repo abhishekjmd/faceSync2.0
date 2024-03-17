@@ -29,7 +29,7 @@ function EditProfile() {
   const handleUpdateClick = async () => {
     // Retrieve the userId from localStorage
     const userId = localStorage.getItem('userId');
-
+    console.log(userId);
     // Ensure userId is not null
     if (!userId) {
       setAlertMessage('User ID not found. Please log in again.');
@@ -44,22 +44,20 @@ function EditProfile() {
         const response = await axios.patch(`http://192.168.155.237:3000/api/profile/${userId}`, {
           email, address, pincode, hobbies
         });
-        if (response.status === 200) {
           setAlertMessage('Profile updated successfully.');
           setAlertOpen(true);
           navigate('/profileView')
-          // Optionally, clear the form fields or perform additional actions
-        } else {
-          // Handle any other responses
-          setAlertMessage('Failed to update profile. Please try again.');
-          setAlertOpen(true);
-        }
-      } catch (error) {
+        } catch (error) {
         setAlertMessage('Failed to update profile. Please try again.');
         setAlertOpen(true);
         console.error('Error updating profile:', error);
       }
     }
+  };
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+    handleClose(); // Close the menu after navigation
   };
 
   const handleNavigate = (path) => {
@@ -110,10 +108,10 @@ function EditProfile() {
             <ArrowDropDownIcon sx={{ color: "white", fontSize: 30 }} />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            <MenuItem onClick={handleClose}>Edit Profile</MenuItem>
-            <MenuItem onClick={handleClose}>Manage Password</MenuItem>
-            <MenuItem onClick={handleClose}>View Marked Attendance</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/editProfile')}>Edit Profile</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/ManagePassword')}>Manage Password</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/markedAttendence')}>View Marked Attendance</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/welcomePage')}>Logout</MenuItem>
           </Menu>
         </Box>
       </Box>

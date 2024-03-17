@@ -3,6 +3,7 @@ import { Box, Typography, TextField, InputAdornment, Button, Dialog, DialogActio
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
 
 function ViewDeleteStudents() {
   const [students, setStudents] = useState([
@@ -14,7 +15,8 @@ function ViewDeleteStudents() {
   ]);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteStudentId, setDeleteStudentId] = useState(null);
-
+  const navigate = useNavigate();
+  
   const handleClickOpenDialog = (id) => {
     setOpenDialog(true);
     setDeleteStudentId(id);
@@ -22,6 +24,10 @@ function ViewDeleteStudents() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
   };
 
   const handleDeleteStudent = () => {
@@ -53,15 +59,9 @@ function ViewDeleteStudents() {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
           <img src={logo} style={{ height: 60, width: 40 }} alt="logo" />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Schedule
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Students
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Attendance
-          </Typography>
+          <Button onClick={() => handleNavigate('/manageSchedule')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Schedule</Button>
+          <Button onClick={() => handleNavigate('/manageStudentsProfile')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Students</Button>
+          <Button onClick={() => handleNavigate('/manageAttendence')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Attendence</Button>
         </Box>
         <Box >
           <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>Logout</Typography>

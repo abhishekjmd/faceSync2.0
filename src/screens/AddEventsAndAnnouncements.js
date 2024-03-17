@@ -3,31 +3,70 @@ import { Box, Typography, TextField, FormControl, Button, Dialog, DialogActions,
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
 
-function SubmitSession() {
+
+function AddEventsAndAnnouncements() {
   const [date, setDate] = useState('');
+  const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
-  // State for managing dialog visibility and content
+  const [type, setType] = useState('event'); // Assuming you want to hardcode or set this through some UI interaction
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const navigate = useNavigate();
 
   // Function to handle submission
-  const handleSubmit = () => {
-    if (!date.trim() || !details.trim()) {
+  const handleSubmit = async () => {
+    if (!date.trim() || !details.trim() || !title.trim()) {
       setAlertMessage('Please fill in all fields before submitting.');
       setAlertOpen(true);
     } else {
-      // Here you would handle the actual submission logic
-      setAlertMessage('Event successfully added!');
-      setAlertOpen(true);
+      try {
+        // Format the date to ensure compatibility with your database
+        const formattedDate = new Date(date).toISOString();
+        const payload = {
+          type, // This could be 'event' or 'announcement', depending on your form/UI
+          date: formattedDate,
+          details,
+          title:title
+          // Include additional fields as per your model requirements
+        };
+        const response = await fetch('http://192.168.155.237:3000/api/events-announcements', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error || 'Failed to add event or announcement');
+        }
+
+        // Optionally handle response data
+        const responseData = await response.json();
+        navigate('/manageSchedule')
+        setAlertMessage('Event successfully added!');
+        setDate('');
+        setDetails('');
+        // Reset other fields as necessary
+      } catch (error) {
+        setAlertMessage(`Error: ${error.message}`);
+      } finally {
+        setAlertOpen(true);
+      }
     }
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
   };
 
   // Function to close the dialog
   const handleCloseDialog = () => {
     setAlertOpen(false);
   };
-
 
   return (
     <Box
@@ -50,15 +89,9 @@ function SubmitSession() {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
           <img src={logo} style={{ height: 60, width: 40 }} />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Schedule
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Students
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Attendence
-          </Typography>
+          <Button onClick={() => handleNavigate('/manageSchedule')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Schedule</Button>
+          <Button onClick={() => handleNavigate('/manageStudentsProfile')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Students</Button>
+          <Button onClick={() => handleNavigate('/manageAttendence')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Attendence</Button>
         </Box>
         <Box >
           <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>Logout</Typography>
@@ -66,9 +99,6 @@ function SubmitSession() {
       </Box>
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
         <Box sx={{ width: 1000, height: 1000, backgroundColor: '#D9D9D91A', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'column' }}>
-          <Box sx={{ width: 600, height: 70, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid white', marginTop: 5, borderRadius: 2, backgroundColor: '#D9D9D933' }}>
-            <Typography sx={{ fontSize: 24, color: '#FFFFFF', textTransform: 'uppercase' }}>Add Events and announcements</Typography>
-          </Box>
           <Box
             sx={{
               display: "flex",
@@ -90,10 +120,38 @@ function SubmitSession() {
                   name="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  type='date'
                 />
               </FormControl>
             </Box>
           </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              marginTop: 8,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 3,
+            }}
+          >
+            <Typography sx={{ fontSize: 24, color: "white", width: 200 }}>
+              Title:
+            </Typography>
+            <Box sx={{ width: 650 }}>
+              <FormControl fullWidth>
+                <TextField
+                  sx={{
+                    backgroundColor: "#D9D9D933",
+                  }}
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </FormControl>
+            </Box>
+          </Box>
+
           <Box
             sx={{
               display: "flex",
@@ -111,34 +169,19 @@ function SubmitSession() {
                 <TextField
                   sx={{
                     backgroundColor: "#D9D9D933",
-                    height: 300,
+                    // height: 300,
                   }}
                   name="Details"
                   value={details}
-                  onChange={(e)=>setDetails(e.target.value)}
+                  onChange={(e) => setDetails(e.target.value)}
                 />
               </FormControl>
             </Box>
           </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              marginTop: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 3,
-            }}
+          <Box sx={{ width: 600, height: 70, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid white', marginTop: 10, borderRadius: 2, backgroundColor: '#D9D9D933', marginLeft: 10 }}
+            onClick={() => handleSubmit()}
           >
-            <Typography sx={{ fontSize: 24, color: "white", width: 200 }}>
-              Upload data:
-            </Typography>
-            <Box sx={{ width: 650, backgroundColor: "#D9D9D933", height: 60, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-              <Typography sx={{ fontSize: 24, color: "white", fontWeight: '700' }}>Select file here</Typography>
-            </Box>
-          </Box>
-          <Box onClick={handleSubmit} sx={{ width: 400, height: 50, backgroundColor: '#D9D9D933', marginTop: 10, marginLeft: 15, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography sx={{ fontWeight: '700', textTransform: 'uppercase', color: 'white', fontSize: 24 }}>ADD</Typography>
+            <Typography sx={{ fontSize: 24, color: '#FFFFFF', textTransform: 'uppercase' }}>Add Events and announcements</Typography>
           </Box>
         </Box>
       </Box>
@@ -164,4 +207,4 @@ function SubmitSession() {
   );
 }
 
-export default SubmitSession;
+export default AddEventsAndAnnouncements;

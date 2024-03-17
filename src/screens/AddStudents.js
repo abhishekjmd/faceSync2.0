@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Box, Typography, TextField, FormControl, InputLabel, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import logo from "../assets/logo.png";
-import  WarningAmberIcon  from '@mui/icons-material/WarningAmber';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import axios from 'axios';
 
 function AddStudent() {
   const [fullName, setFullName] = useState('');
@@ -19,14 +20,45 @@ function AddStudent() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
-  const handleInsert = () => {
+  const handleInsert = async () => {
     if (!fullName || !defaultUsername || !enrollmentNumber || !department || !course || !rollNumber || !division || !semester || !email || !phoneNumber || !defaultPassword) {
       setAlertMessage('All fields are required. Please fill out all fields before inserting.');
       setAlertOpen(true);
     } else {
-      // Here, you would typically handle the insertion logic
-      setAlertMessage('Student successfully added!');
-      setAlertOpen(true);
+      try {
+        const studentData = {
+          name: fullName,
+          username: defaultUsername,
+          enrollmentNumber,
+          department,
+          course,
+          rollNumber,
+          division,
+          semester, // Ensure semester is a number
+          email,
+          phoneNumber,
+          password: defaultPassword,
+        };
+        console.log("Submitting student data:", studentData);
+        await axios.post('http://192.168.155.237:3000/api/register', studentData);
+        setAlertMessage('Student successfully added!');
+        // Resetting form fields (optional)
+        setFullName('');
+        setDefaultUsername('');
+        setEnrollmentNumber('');
+        setDepartment('');
+        setCourse('');
+        setRollNumber('');
+        setDivision('');
+        setSemester('');
+        setEmail('');
+        setPhoneNumber('');
+        setDefaultPassword('');
+      } catch (error) {
+        setAlertMessage('Failed to add student. Please try again.');
+      } finally {
+        setAlertOpen(true);
+      }
     }
   };
 
@@ -80,7 +112,6 @@ function AddStudent() {
                 <FormControl fullWidth>
                   <TextField
                     label='Enter Student Full name'
-                    name='rollNumber'
                     InputLabelProps={{
                       style: { color: "white" }, // Directly style the label
                     }}
@@ -98,8 +129,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -108,7 +139,7 @@ function AddStudent() {
                 <FormControl fullWidth>
                   <TextField
                     label='Enter Student Default Username'
-                    name='rollNumber'
+                    name='username'
                     InputLabelProps={{
                       style: { color: "white" }, // Directly style the label
                     }}
@@ -126,8 +157,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
+                    value={defaultUsername}
+                    onChange={(e) => setDefaultUsername(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -136,7 +167,7 @@ function AddStudent() {
                 <FormControl fullWidth>
                   <TextField
                     label='Enter Student Enrollment Number'
-                    name='rollNumber'
+                    name='enrollment number'
                     InputLabelProps={{
                       style: { color: "white" }, // Directly style the label
                     }}
@@ -154,19 +185,22 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
+                    value={enrollmentNumber}
+                    onChange={(e) => setEnrollmentNumber(e.target.value)}
                   />
                 </FormControl>
               </Box>
 
-
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
                 <FormControl fullWidth>
-                  <InputLabel>Select Student Department</InputLabel>
+                  <InputLabel id="department-label">Select Student Department</InputLabel>
                   <Select
-                    label='Select Student Department'
-                    name='studentDepartment'
+                    labelId="department-label"
+                    id="department-select"
+                    value={department}
+                    label="Select Student Department"
+                    onChange={(e) => setDepartment(e.target.value)}
+                    // onChange={(e) => setDepartment(e.target.value)}
                   >
                     <MenuItem value="Computer Science">Computer Science</MenuItem>
                     <MenuItem value="Mathematics">Mathematics</MenuItem>
@@ -174,21 +208,22 @@ function AddStudent() {
                   </Select>
                 </FormControl>
               </Box>
-
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
                 <FormControl fullWidth>
-                  <InputLabel>Select Student Course</InputLabel>
+                  <InputLabel id="course-label">Select Student Course</InputLabel>
                   <Select
-                    label='Select Student Department'
-                    name='studentDepartment'
+                    labelId="course-label"
+                    id="course-select"
+                    value={course}
+                    label="Select Student Course"
+                    onChange={(e) => setCourse(e.target.value)}
                   >
-                    <MenuItem value="Computer Science">Computer Science</MenuItem>
-                    <MenuItem value="Mathematics">Mathematics</MenuItem>
-                    <MenuItem value="Economics">Economics</MenuItem>
+                    <MenuItem value="B.Tech">B.Tech</MenuItem>
+                    <MenuItem value="B.Sc">B.Sc</MenuItem>
+                    <MenuItem value="BA">BA</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
-
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
                 <FormControl fullWidth>
                   <TextField
@@ -211,8 +246,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={rollNumber}
-                  onChange={(e) => setRollNumber(e.target.value)}
+                    value={rollNumber}
+                    onChange={(e) => setRollNumber(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -239,8 +274,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={division}
-                  onChange={(e) => setDivision(e.target.value)}
+                    value={division}
+                    onChange={(e) => setDivision(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -267,8 +302,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={semester}
-                  onChange={(e) => setSemester(e.target.value)}
+                    value={semester}
+                    onChange={(e) => setSemester(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -295,8 +330,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -323,8 +358,8 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </FormControl>
               </Box>
@@ -351,8 +386,9 @@ function AddStudent() {
                         color: "white", // Ensure label remains white when focused
                       },
                     }}
-                  value={defaultPassword}
-                  onChange={(e) => setDefaultPassword(e.target.value)}
+                    type='password'
+                    value={defaultPassword}
+                    onChange={(e) => setDefaultPassword(e.target.value)}
                   />
                 </FormControl>
               </Box>

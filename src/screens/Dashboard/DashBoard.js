@@ -1,17 +1,33 @@
-import React, { useState,useEffect } from "react";
-import { Box, Typography, TextField, InputAdornment } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Menu, MenuItem, IconButton, Button,TextField,InputAdornment, } from "@mui/material";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../utils/Theme";
 import logo from "../../assets/logo.png";
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 
 function DashBoard() {
   // State to handle search input
+  const [anchorEl, setAnchorEl] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [events, setEvents] = useState([]);
   const [sorted, setSorted] = useState(false);
-  
+  const navigate = useNavigate();
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
+
   useEffect(() => {
     const fetchEventsAndAnnouncements = async () => {
       try {
@@ -28,6 +44,12 @@ function DashBoard() {
     setSearchInput(e.target.value);
   };
 
+  const handleMenuClick = (path) => {
+    navigate(path);
+    handleClose(); // Close the menu after navigation
+  };
+
+
   const handleSortByDate = () => {
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(a.date);
@@ -39,15 +61,14 @@ function DashBoard() {
   };
 
   const filteredEvents = events.filter(event =>
-    event.title.toLowerCase().includes(searchInput.toLowerCase())
+    event.title?.toLowerCase().includes(searchInput.toLowerCase())
   );
 
-    
   return (
     <Box
       sx={{
         width: SCREEN_WIDTH,
-        // height: SCREEN_HEIGHT,
+        height: 1500,
         backgroundColor: "black",
       }}
     >
@@ -62,30 +83,32 @@ function DashBoard() {
           marginBottom: 10,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 5 }} >
           <img src={logo} style={{ height: 60, width: 40 }} />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Home
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            DashBoard
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Profile
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Class Schedule
-          </Typography>
+          <Button onClick={() => handleNavigate('/')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Home</Button>
+          <Button onClick={() => handleNavigate('/dashboard')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Dashboard</Button>
+          <Button onClick={() => handleNavigate('/profileView')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Profile</Button>
+          <Button onClick={() => handleNavigate('/classSchedules')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Class Schedule</Button>
         </Box>
-        <Box
-          sx={{
-            marginLeft: 90,
-            width: 50,
-            height: 50,
-            borderRadius: 30,
-            backgroundColor: "#D9D9D9",
-          }}
-        >
+        <Box sx={{ display: "flex" }}>
+          <Box
+            sx={{
+              marginLeft: 90,
+              width: 50,
+              height: 50,
+              borderRadius: 30,
+              backgroundColor: "#D9D9D9",
+            }}
+          />
+          <IconButton onClick={handleClick}>
+            <ArrowDropDownIcon sx={{ color: "white", fontSize: 30 }} />
+          </IconButton>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <MenuItem onClick={() => handleMenuClick('/editProfile')}>Edit Profile</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/ManagePassword')}>Manage Password</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/markedAttendence')}>View Marked Attendance</MenuItem>
+            <MenuItem onClick={() => handleMenuClick('/welcomePage')}>Logout</MenuItem>
+          </Menu>
         </Box>
       </Box>
       <Box
@@ -134,7 +157,7 @@ function DashBoard() {
               borderRadius: 4,
             }}
             onClick={handleSortByDate}
-            >
+          >
             <Typography
               sx={{ fontSize: 24, color: "white", textTransform: "uppercase" }}
             >
@@ -228,8 +251,10 @@ function DashBoard() {
               paddingLeft: 13,
               marginTop: 5,
               marginBottom: 1,
+              cursor: 'pointer',
             }}
-          >
+            onClick={() => navigate('/eventDetails', { state: { event: item } })}
+            >
             <Typography sx={{ fontSize: 24, fontWeight: "700", color: "white" }}>
               {new Date(item.date).toLocaleDateString()}
             </Typography>

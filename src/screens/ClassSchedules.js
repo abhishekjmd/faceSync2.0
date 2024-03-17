@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { Box, Typography, TextField, InputAdornment, IconButton, Menu, MenuItem,Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, TextField, InputAdornment, IconButton, Menu, MenuItem, Button } from "@mui/material";
 import { SCREEN_WIDTH } from "../utils/Theme";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import logo from "../assets/logo.png";
@@ -42,7 +42,6 @@ function ClassSchedules() {
   const filteredSchedules = classSchedules.filter(schedule =>
     schedule.subject.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -88,7 +87,7 @@ function ClassSchedules() {
           <Button onClick={() => handleNavigate('/dashboard')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Dashboard</Button>
           <Button onClick={() => handleNavigate('/profileView')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Profile</Button>
           <Button onClick={() => handleNavigate('/classSchedules')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Class Schedule</Button>
-          </Box>
+        </Box>
         <Box sx={{ display: "flex" }}>
           <Box
             sx={{
@@ -197,14 +196,14 @@ function ClassSchedules() {
         <Typography sx={{ fontSize: 24, color: 'white', width: '12%' }}>Class No.</Typography>
       </Box>
       {filteredSchedules.map((schedule, index) => (
-      <Box sx={{
-        width: SCREEN_WIDTH,
-        borderBottom: "1px solid #FFFFFF21",
-        height: 80,
-        display: "flex",
-        justifyContent: "space-around",
-        alignItems: "center",
-      }}>
+        <Box sx={{
+          width: SCREEN_WIDTH,
+          borderBottom: "1px solid #FFFFFF21",
+          height: 80,
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}>
           <Typography sx={{ fontSize: 24, color: 'white', width: '14%' }}>{new Date(schedule.date).toLocaleDateString('en-US', {
             weekday: 'long', // "Monday"
             year: 'numeric', // "2024"
@@ -216,11 +215,11 @@ function ClassSchedules() {
           <Typography sx={{ fontSize: 24, color: 'white', width: '12%' }}>{schedule.division}</Typography>
           <Typography sx={{ fontSize: 24, color: 'white', width: '12%' }}>{schedule.time} am</Typography>
           <Typography sx={{ fontSize: 24, color: 'white', width: '12%' }}>{schedule.classroom}</Typography>
-      </Box>
+        </Box>
       ))}
-      <Box sx={{width:'100%',height:100,display:'flex',alignItems:'center',justifyContent:'center',marginTop:5}}>
+      <Box sx={{ width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
         <Box sx={{ width: 300, height: 80, borderRadius: 10, backgroundColor: '#D9D9D9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{fontSize:32,color:'black'}}>View Past</Typography>
+          <Typography sx={{ fontSize: 32, color: 'black' }}>View Past</Typography>
         </Box>
       </Box>
     </Box>

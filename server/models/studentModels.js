@@ -13,15 +13,15 @@ const studentSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    required: true // Consider validating against specific roles, e.g., ["student", "admin"]
+    // required: true // Consider validating against specific roles, e.g., ["student", "admin"]
   },
   year: {
     type: Number,
-    required: false // Make sure to handle this based on the role
+    // required: false // Make sure to handle this based on the role
   },
   semester: {
-    type: Number,
-    required: false // Adjusted to be optional
+    type: String,
+    // required: false // Adjusted to be optional
   },
   enrollmentNumber: {
     type: String,
@@ -60,19 +60,19 @@ const studentSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    required: true
+    // required: true
   },
   address: {
     type: String,
-    required: true
+    // required: true
   },
   area: {
     type: String,
-    required: true
+    // required: true
   },
   pincode: {
     type: String,
-    required: true
+    // required: true
   },
   hobbies: [String], // Array of strings to allow multiple hobbies
   interests: [String]

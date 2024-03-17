@@ -142,7 +142,7 @@ router.post('/change-username', async (req, res) => {
 // Update student profile
 router.patch('/profile/:id', async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['email', 'phoneNumber', 'address', 'pincode', 'hobbies'];
+  const allowedUpdates = ['email', 'address', 'pincode', 'hobbies'];
   const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
   if (!isValidOperation) {
