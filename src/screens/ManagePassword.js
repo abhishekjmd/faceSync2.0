@@ -55,13 +55,15 @@ function ManagePassword() {
   const API_BASE_URL = "http://192.168.155.237:3000/api";
 
   const handleUpdatePassword = async () => {
+    const userId = localStorage.getItem('userId');
     setPasswordError("");
-    if (!currentPassword || !newPassword) {
-      setPasswordError("Both current and new password are required.");
+    if (!currentPassword || !newPassword || !userId) { // Assuming you have a state for username
+      setPasswordError("Username, current password, and new password are required.");
       return;
     }
     try {
       const response = await axios.post(`${API_BASE_URL}/change-password`, {
+        userId, // Send the user ID in the request
         currentPassword,
         newPassword,
       });
@@ -86,6 +88,7 @@ function ManagePassword() {
       });
       setAlertMessage(response.data.message || "Username successfully updated.");
       setAlertOpen(true);
+      // navigate('/profileView');
     } catch (error) {
       setUsernameError(error.response?.data?.message || "An error occurred during the username update.");
     }

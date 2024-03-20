@@ -93,12 +93,7 @@ function ManageSchedule() {
           {filteredSchedules.map((schedule, index) => (
             <Box sx={{ width: '100%', height: 70, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', border: '1px solid #FFFFFF21' }}>
               <Typography sx={{ fontSize: 18, fontWeight: '700', color: 'white', padding: 2 }}>
-                {new Date(schedule.date).toLocaleDateString('en-US', {
-                  weekday: 'long', // "Monday"
-                  year: 'numeric', // "2024"
-                  month: 'long', // "March"
-                  day: 'numeric' // "15"
-                })} {schedule.subject}
+                {(schedule.date)} {"  "}  {schedule.subject}
               </Typography>
             </Box>
           ))}

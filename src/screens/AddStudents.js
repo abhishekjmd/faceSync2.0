@@ -4,6 +4,7 @@ import { SCREEN_WIDTH } from "../utils/Theme";
 import logo from "../assets/logo.png";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function AddStudent() {
   const [fullName, setFullName] = useState('');
@@ -13,12 +14,17 @@ function AddStudent() {
   const [course, setCourse] = useState('');
   const [rollNumber, setRollNumber] = useState('');
   const [division, setDivision] = useState('');
-  const [semester, setSemester] = useState('');
+  const [semester, setSemester] = useState(0);
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [defaultPassword, setDefaultPassword] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
   const handleInsert = async () => {
     if (!fullName || !defaultUsername || !enrollmentNumber || !department || !course || !rollNumber || !division || !semester || !email || !phoneNumber || !defaultPassword) {
@@ -34,32 +40,38 @@ function AddStudent() {
           course,
           rollNumber,
           division,
-          semester, // Ensure semester is a number
+          semester, // Convert semester to a number
           email,
           phoneNumber,
           password: defaultPassword,
         };
-        console.log("Submitting student data:", studentData);
-        await axios.post('http://192.168.155.237:3000/api/register', studentData);
+
+        const response = await axios.post('http://192.168.155.237:3000/api/register', studentData);
+        console.log("Student successfully added:", response.data);
         setAlertMessage('Student successfully added!');
-        // Resetting form fields (optional)
-        setFullName('');
-        setDefaultUsername('');
-        setEnrollmentNumber('');
-        setDepartment('');
-        setCourse('');
-        setRollNumber('');
-        setDivision('');
-        setSemester('');
-        setEmail('');
-        setPhoneNumber('');
-        setDefaultPassword('');
+        // Resetting form fields
+        resetFormFields();
       } catch (error) {
+        console.error("Failed to add student:", error);
         setAlertMessage('Failed to add student. Please try again.');
-      } finally {
         setAlertOpen(true);
       }
     }
+  };
+
+  // Reset form fields
+  const resetFormFields = () => {
+    setFullName('');
+    setDefaultUsername('');
+    setEnrollmentNumber('');
+    setDepartment('');
+    setCourse('');
+    setRollNumber('');
+    setDivision('');
+    setSemester('');
+    setEmail('');
+    setPhoneNumber('');
+    setDefaultPassword('');
   };
 
   const handleCloseDialog = () => {
@@ -87,25 +99,16 @@ function AddStudent() {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
           <img src={logo} style={{ height: 60, width: 40 }} />
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Schedule
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Students
-          </Typography>
-          <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>
-            Manage Attendence
-          </Typography>
+          <Button onClick={() => handleNavigate('/manageSchedule')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Schedule</Button>
+          <Button onClick={() => handleNavigate('/manageStudentsProfile')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Students</Button>
+          <Button onClick={() => handleNavigate('/manageAttendence')} sx={{ color: "white", fontSize: 24, fontWeight: "400", textTransform: "none" }}>Manage Attendence</Button>
         </Box>
-        <Box >
+        <Box onClick={() => navigate('/welcomePage')}>
           <Typography sx={{ color: "white", fontSize: 24, fontWeight: "400" }}>Logout</Typography>
         </Box>
       </Box>
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5, flexDirection: 'column' }}>
         <Box sx={{ width: 1000, height: 1200, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'column' }}>
-          <Box sx={{ width: 400, height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid white', marginTop: 5, borderRadius: 2, backgroundColor: '#D9D9D933' }}>
-            <Typography sx={{ fontSize: 24, color: '#FFFFFF', }}>Add Student</Typography>
-          </Box>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
             <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
@@ -193,35 +196,56 @@ function AddStudent() {
 
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
                 <FormControl fullWidth>
-                  <InputLabel id="department-label">Select Student Department</InputLabel>
-                  <Select
-                    labelId="department-label"
-                    id="department-select"
+                  <TextField
+                    label='Enter Department'
+                    name='department'
+                    InputLabelProps={{
+                      style: { color: "white" }, // Directly style the label
+                    }}
+                    sx={{
+                      backgroundColor: "#D9D9D91A",
+                      color: "white",
+                      "& .MuiInputBase-input": {
+                        color: "white",
+                      },
+                      "& .MuiInputLabel-root": {
+                        // This targets the label
+                        color: "white", // Ensure the label is white
+                      },
+                      "& .Mui-focused": {
+                        color: "white", // Ensure label remains white when focused
+                      },
+                    }}
                     value={department}
-                    label="Select Student Department"
                     onChange={(e) => setDepartment(e.target.value)}
-                    // onChange={(e) => setDepartment(e.target.value)}
-                  >
-                    <MenuItem value="Computer Science">Computer Science</MenuItem>
-                    <MenuItem value="Mathematics">Mathematics</MenuItem>
-                    <MenuItem value="Economics">Economics</MenuItem>
-                  </Select>
+                  />
                 </FormControl>
               </Box>
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>
                 <FormControl fullWidth>
-                  <InputLabel id="course-label">Select Student Course</InputLabel>
-                  <Select
-                    labelId="course-label"
-                    id="course-select"
+                  <TextField
+                    label='Enter Students course'
+                    name='course'
+                    InputLabelProps={{
+                      style: { color: "white" }, // Directly style the label
+                    }}
+                    sx={{
+                      backgroundColor: "#D9D9D91A",
+                      color: "white",
+                      "& .MuiInputBase-input": {
+                        color: "white",
+                      },
+                      "& .MuiInputLabel-root": {
+                        // This targets the label
+                        color: "white", // Ensure the label is white
+                      },
+                      "& .Mui-focused": {
+                        color: "white", // Ensure label remains white when focused
+                      },
+                    }}
                     value={course}
-                    label="Select Student Course"
                     onChange={(e) => setCourse(e.target.value)}
-                  >
-                    <MenuItem value="B.Tech">B.Tech</MenuItem>
-                    <MenuItem value="B.Sc">B.Sc</MenuItem>
-                    <MenuItem value="BA">BA</MenuItem>
-                  </Select>
+                  />
                 </FormControl>
               </Box>
               <Box sx={{ width: 800, backgroundColor: '#D9D9D933', marginTop: 5, border: '1px solid white', }}>

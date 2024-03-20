@@ -46,7 +46,10 @@ function AddSession() {
     } else {
       try {
         // Convert date from 'DD-MM-YYYY' to 'YYYY-MM-DD' format
-        const formattedDate = date.split('-').reverse().join('-');
+        // Correctly format the date to "YYYY-MM-DD"
+        const parts = date.split('-');
+        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // const formattedDate = date.split('-').reverse().join('-');
         const sessionData = {
           date: formattedDate,
           subject, teacher, time, division, classroom
@@ -60,11 +63,8 @@ function AddSession() {
           body: JSON.stringify(sessionData),
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to add session. Please try again.');
-        }
-
         const responseData = await response.json();
+        console.log('response data',responseData);
         setAlertMessage('Session added successfully!');
         navigate('/manageSchedule');
         setDate();
@@ -143,6 +143,7 @@ function AddSession() {
                   name="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  type='date'
                 />
               </FormControl>
             </Box>

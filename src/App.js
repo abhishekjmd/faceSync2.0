@@ -20,6 +20,8 @@ import NewPassword from './screens/NewPassword.js';
 import WelcomePage from './screens/WelcomePage.js';
 import EventDetails from './screens/Dashboard/EventDetails.js';
 import AddEventsAndAnnouncements from './screens/AddEventsAndAnnouncements.js';
+import Attendance from './screens/addattendance.js';
+import AdminProfileView from './screens/AdminProfileView.js';
 
 function App() {
   return (
@@ -47,7 +49,8 @@ function App() {
           <Route path="/forgetPassword" element={<ForgetPassword />} />
           <Route path="/newPassword" element={<NewPassword />} />
           <Route path="/eventDetails" element={<EventDetails />} />
-
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/adminProfileView" element={<AdminProfileView />} />
         </Routes>
       </div>
     </Router>

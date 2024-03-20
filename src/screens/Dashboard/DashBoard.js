@@ -128,6 +128,7 @@ function DashBoard() {
           }}
         >
           <Box
+          onClick={() => navigate('/attendance')}      
             sx={{
               width: 400,
               height: 60,
@@ -138,7 +139,8 @@ function DashBoard() {
               alignItems: "center",
               borderRadius: 4,
             }}
-          >
+          
+            >
             <Typography
               sx={{ fontSize: 24, color: "white", textTransform: "uppercase" }}
             >

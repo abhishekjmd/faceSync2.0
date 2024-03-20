@@ -1,22 +1,38 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Box, Typography, TextField, InputAdornment, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../utils/Theme";
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../assets/logo.png";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function ViewDeleteStudents() {
-  const [students, setStudents] = useState([
-    { id: 1, enrollmentId: "202100319010028", fullName: "Suman Kushwaha", course: "BCA", semester: "VI" },
-    { id: 2, enrollmentId: "202100319010029", fullName: "Amit Singh", course: "BCA", semester: "VI" },
-    { id: 3, enrollmentId: "202100319010030", fullName: "Riya Patel", course: "BCA", semester: "VI" },
-    { id: 4, enrollmentId: "202100319010031", fullName: "John Doe", course: "BCA", semester: "VI" },
-    { id: 5, enrollmentId: "202100319010032", fullName: "Jane Doe", course: "BCA", semester: "VI" },
-  ]);
+  const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteStudentId, setDeleteStudentId] = useState(null);
   const navigate = useNavigate();
   
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value); // Update the search term as the user types
+  };
+  
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get('http://192.168.155.237:3000/api/students'); // Adjust the URL as needed
+      const filteredStudents = response.data.filter(student => student.role === "student");
+      setStudents(filteredStudents);
+      console.log(response); // Assuming the response data is the array of students
+    } catch (error) {
+      console.error('Failed to fetch students:', error);
+      // Handle error (e.g., show an error message)
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
   const handleClickOpenDialog = (id) => {
     setOpenDialog(true);
     setDeleteStudentId(id);
@@ -30,11 +46,19 @@ function ViewDeleteStudents() {
     navigate(path);
   };
 
+  const handleViewStudent = (studentId) => {
+    navigate('/adminProfileView', { state: { studentId } });
+  };
+
   const handleDeleteStudent = () => {
     setStudents(students.filter(student => student.id !== deleteStudentId));
     handleCloseDialog();
     // Here you would also show a success message or perform other actions as needed
   };
+
+  const filteredStudents = students.filter(student =>
+    student.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box
@@ -97,7 +121,9 @@ function ViewDeleteStudents() {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search by subject name"
+            placeholder="search by student's name"
+            value={searchTerm}
+            onChange={handleSearchChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -142,7 +168,7 @@ function ViewDeleteStudents() {
       </Box>
 
       {/* Data Row */}
-      {students.map((student) => (
+      {filteredStudents.map((student) => (
         <Box sx={{
           width: SCREEN_WIDTH,
           borderBottom: "1px solid #FFFFFF21",
@@ -151,8 +177,8 @@ function ViewDeleteStudents() {
           justifyContent: "space-around",
           alignItems: "center",
         }}>
-          <Typography sx={{ fontSize: 24, color: 'white', width: '14%' }}>{student.enrollmentId}</Typography>
-          <Typography sx={{ fontSize: 24, color: 'white', width: '20%' }}>{student.fullName}</Typography>
+          <Typography sx={{ fontSize: 24, color: 'white', width: '14%' }}>{student.enrollmentNumber}</Typography>
+          <Typography sx={{ fontSize: 24, color: 'white', width: '20%' }}>{student.name}</Typography>
           <Typography sx={{ fontSize: 24, color: 'white', width: '14%' }}>{student.course}</Typography>
           <Typography sx={{ fontSize: 24, color: 'white', width: '20%' }}>{student.semester}</Typography>
           {/* Delete Button */}
@@ -160,7 +186,10 @@ function ViewDeleteStudents() {
             <Typography sx={{ fontSize: 24, color: 'black' }}>Delete</Typography>
           </Box>
           {/* View Button */}
-          <Box sx={{ width: '5.5%', height: 50, backgroundColor: 'white', borderRadius: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Box 
+          sx={{ width: '5.5%', height: 50, backgroundColor: 'white', borderRadius: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            onClick={() => handleViewStudent(student._id)}
+          >
             <Typography sx={{ fontSize: 24, color: 'black' }}>View</Typography>
           </Box>
         </Box>

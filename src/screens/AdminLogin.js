@@ -18,7 +18,6 @@ const AdminLogin = () => {
       setAlertOpen(true);
       return;
     }
-
     try {
       const response = await axios.post('http://192.168.155.237:3000/api/login', { username, password });
       setAlertMessage('Login successful!');

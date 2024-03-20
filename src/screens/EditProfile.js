@@ -27,10 +27,7 @@ function EditProfile() {
   };
 
   const handleUpdateClick = async () => {
-    // Retrieve the userId from localStorage
     const userId = localStorage.getItem('userId');
-    console.log(userId);
-    // Ensure userId is not null
     if (!userId) {
       setAlertMessage('User ID not found. Please log in again.');
       setAlertOpen(true);
@@ -39,21 +36,56 @@ function EditProfile() {
     if (!email.trim() || !address.trim() || !pincode.trim() || !hobbies.trim()) {
       setAlertMessage('Please fill in all fields.');
       setAlertOpen(true);
-    } else {
-      try {
-        const response = await axios.patch(`http://192.168.155.237:3000/api/profile/${userId}`, {
-          email, address, pincode, hobbies
-        });
-          setAlertMessage('Profile updated successfully.');
-          setAlertOpen(true);
-          navigate('/profileView')
-        } catch (error) {
-        setAlertMessage('Failed to update profile. Please try again.');
-        setAlertOpen(true);
-        console.error('Error updating profile:', error);
+      return; // Make sure to return here to prevent further execution
+    }
+    try {
+      const response = await axios.patch(`http://192.168.155.237:3000/api/profile/${userId}`, {
+        email, address, pincode, hobbies
+      });
+      if (response.status === 200) {
+        setAlertMessage('Profile updated successfully.');
+        navigate('/profileView');
+      } else {
+        // Handle other status codes or errors as needed
+        throw new Error('Failed to update profile');
       }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setAlertMessage('Failed to update profile. Please try again.');
+    } finally {
+      setAlertOpen(true);
     }
   };
+
+
+  // const handleUpdateClick = async () => {
+  //   // Retrieve the userId from localStorage
+  //   const userId = localStorage.getItem('userId');
+  //   console.log(userId);
+  //   // Ensure userId is not null
+  //   if (!userId) {
+  //     setAlertMessage('User ID not found. Please log in again.');
+  //     setAlertOpen(true);
+  //     return;
+  //   }
+  //   if (!email.trim() || !address.trim() || !pincode.trim() || !hobbies.trim()) {
+  //     setAlertMessage('Please fill in all fields.');
+  //     setAlertOpen(true);
+  //   } else {
+  //     try {
+  //       const response = await axios.patch(`http://192.168.155.237:3000/api/profile/${userId}`, {
+  //         email, address, pincode, hobbies
+  //       });
+  //         setAlertMessage('Profile updated successfully.');
+  //         setAlertOpen(true);
+  //         navigate('/profileView')
+  //       } catch (error) {
+  //       setAlertMessage('Failed to update profile. Please try again.');
+  //       setAlertOpen(true);
+  //       console.error('Error updating profile:', error);
+  //     }
+  //   }
+  // };
 
   const handleMenuClick = (path) => {
     navigate(path);

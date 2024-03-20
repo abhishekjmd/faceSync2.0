@@ -17,6 +17,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.get('/students', async (req, res) => {
+  try {
+    const students = await Student.find({}); // Fetch all students
+    res.status(200).send(students);
+  } catch (error) {
+    console.error('Failed to fetch students:', error);
+    res.status(500).send({ message: 'An error occurred while fetching the student profiles' });
+  }
+});
 
 // Get student details by ID
 router.get('/students/:id', async (req, res) => {
@@ -93,9 +102,9 @@ async function getStudent(req, res, next) {
 
 // Simplified Change Password
 router.post('/change-password', async (req, res) => {
-  const { currentPassword, newPassword } = req.body;
+  const { userId, currentPassword, newPassword } = req.body;
   try {
-    const student = await Student.findOne({ username });
+    const student = await Student.findById(userId);
     if (!student) {
       return res.status(404).send({ message: 'User not found.' });
     }
@@ -103,15 +112,13 @@ router.post('/change-password', async (req, res) => {
     if (!isMatch) {
       return res.status(400).send({ message: 'Invalid current password' });
     }
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    student.password = hashedPassword;
+    student.password = await bcrypt.hash(newPassword, 10);
     await student.save();
     res.send({ message: 'Password updated successfully' });
   } catch (error) {
     res.status(500).send({ message: 'An error occurred', error });
   }
 });
-
 
 // Simplified Change Username
 router.post('/change-username', async (req, res) => {
@@ -142,7 +149,7 @@ router.post('/change-username', async (req, res) => {
 // Update student profile
 router.patch('/profile/:id', async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['email', 'address', 'pincode', 'hobbies'];
+  const allowedUpdates = ['email', 'address', 'pincode', 'hobbies','role'];
   const isValidOperation = updates.every(update => allowedUpdates.includes(update));
 
   if (!isValidOperation) {
