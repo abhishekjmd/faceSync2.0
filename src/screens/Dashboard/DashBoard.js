@@ -128,7 +128,7 @@ function DashBoard() {
           }}
         >
           <Box
-          onClick={() => navigate('/attendance')}      
+            onClick={() => navigate('/videoStream')}      
             sx={{
               width: 400,
               height: 60,

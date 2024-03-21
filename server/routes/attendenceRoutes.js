@@ -1,24 +1,19 @@
 const express = require('express');
-const Attendance = require('../models/attendenceModel');
+const Attendance = require('../models/attendenceModel'); // Ensure the model file name matches the updated one if changed
 
 const router = express.Router();
 
 // Create a new attendance record
 router.post('/record-attendance', async (req, res) => {
-  const { date, subject, teacher, time, division, classroom, students } = req.body;
+  const { date, time, name, present } = req.body;
 
   try {
     const attendanceRecord = new Attendance({
       date,
-      subject,
-      teacher,
       time,
-      division,
-      classroom,
-      students: students.map(student => ({
-        studentId: student.studentId,
-        present: student.present
-      }))
+      name,
+      present
+
     });
 
     await attendanceRecord.save();
@@ -28,33 +23,19 @@ router.post('/record-attendance', async (req, res) => {
   }
 });
 
-
 // Get all attendance records
 router.get('/', async (req, res) => {
   try {
-    const records = await Attendance.find({})
-     .populate({
-       path: 'students.studentId',
-       model: 'Student'
-     })
-      .exec();
+    const records = await Attendance.find({}).exec();
     res.json(records);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Get a single attendance record by ID
-router.get('/:studentId/attendance-records', async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    const attendanceRecords = await Attendance.find({ 'students.studentId': studentId });
-    res.json(attendanceRecords);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
+// Since the original schema was significantly changed, the route for getting a single attendance record by studentId
+// may no longer be relevant. If you still need a similar functionality, consider updating the logic based on new schema.
+// For now, it's omitted due to the lack of a clear replacement.
 
 // Update an attendance record by ID
 router.patch('/:id', async (req, res) => {

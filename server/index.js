@@ -21,7 +21,7 @@ mongoose.connect('mongodb+srv://aspringsoul120:FUJbIIoRyaBFAwGX@cluster0.hqymmtj
     .then(() => console.log('MongoDB connection successful'))
     .catch(err => console.error('MongoDB connection error:', err));
 const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
+db.on('error'   , (error) => console.error(error));
 db.once('open', () => console.log('Connected to database'));
 
 app.use('/api', studentRoutes);
